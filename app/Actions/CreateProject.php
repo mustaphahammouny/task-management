@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 final class CreateProject
 {
+    /**
+     * @param  array{name: string}  $data
+     */
     public function execute(User $user, array $data): Project
     {
         return DB::transaction(

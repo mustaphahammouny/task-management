@@ -26,7 +26,7 @@ final class ProjectController extends Controller
         $data = $request->validated();
 
         try {
-            $createProject->execute($this->currentUser, $data);
+            $createProject->execute($this->currentUser, ['name' => $data['name']]);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Project created.')]);
         } catch (\Throwable $th) {
@@ -44,7 +44,7 @@ final class ProjectController extends Controller
         $data = $request->validated();
 
         try {
-            $updateProject->execute($project, $data);
+            $updateProject->execute($project, ['name' => $data['name']]);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Project updated.')]);
         } catch (\Throwable $th) {

@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 
 final class UpdateTask
 {
+    /**
+     * @param  array{name: string}  $data
+     */
     public function execute(Task $task, array $data): Task
     {
         return DB::transaction(

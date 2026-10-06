@@ -64,10 +64,13 @@ final class taskController extends Controller
     ): RedirectResponse {
         $data = $request->validated();
 
-        $project = $this->currentUser->projects()->findOrFail($data['project_id']);
+        $project = $this->currentUser->projects()->whereKey($data['project_id'])->firstOrFail();
 
         try {
-            $createTask->execute($project, $data);
+            $createTask->execute($project, [
+                'name' => $data['name'],
+                'priority' => $data['priority'],
+            ]);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Task created.')]);
         } catch (\Throwable $th) {
@@ -85,7 +88,7 @@ final class taskController extends Controller
         $data = $request->validated();
 
         try {
-            $updateTask->execute($task, $data);
+            $updateTask->execute($task, ['name' => $data['name']]);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Task updated.')]);
         } catch (\Throwable $th) {
@@ -102,7 +105,7 @@ final class taskController extends Controller
         $data = $request->validated();
 
         try {
-            $reorderTasks->execute($this->currentUser, $data);
+            $reorderTasks->execute($this->currentUser, ['reordered_ids' => $data['reordered_ids']]);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Tasks reordered.')]);
         } catch (\Throwable $th) {
