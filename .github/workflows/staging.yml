@@ -38,11 +38,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Prepare env file
-        run: |
-          cp .env.example .env
-
-          sed -i "s|^APP_NAME=.*|APP_NAME=\"Task Management\"|" .env
-          sed -i "s|^APP_URL=.*|APP_URL=https://task-management.mustaphahammouny.com|" .env
+        run: cp .env.staging.example .env
 
       - name: Build Frontend
         run: npm run build
@@ -72,12 +68,10 @@ jobs:
             cd /home/${{ secrets.SERVER_USERNAME }}/domains/mustaphahammouny.com/public_html/task-management
 
             if [ ! -f .env ]; then
-              cp .env.example .env
+              cp .env.staging.example .env
             fi
 
-            sed -i "s|^APP_NAME=.*|APP_NAME=\"Task Management\"|" .env
             sed -i "s|^APP_KEY=.*|APP_KEY=${{ secrets.APP_KEY }}|" .env
-            sed -i "s|^APP_URL=.*|APP_URL=https://task-management.mustaphahammouny.com|" .env
 
             sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=${{ secrets.DB_CONNECTION }}|" .env
             sed -i "s|^DB_HOST=.*|DB_HOST=${{ secrets.DB_HOST }}|" .env
