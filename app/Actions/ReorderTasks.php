@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 final class ReorderTasks
 {
+    /**
+     * @param  array{reordered_ids: array<int, int>}  $data
+     */
     public function execute(User $user, array $data): void
     {
         $reorderedIds = $data['reordered_ids'];

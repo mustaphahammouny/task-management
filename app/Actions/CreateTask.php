@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 final class CreateTask
 {
+    /**
+     * @param  array{name: string, priority: int}  $data
+     */
     public function execute(Project $project, array $data): Task
     {
         return DB::transaction(
