@@ -1,17 +1,29 @@
 ﻿<script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
-import { VueDraggable } from 'vue-draggable-plus'
+import { VueDraggable } from 'vue-draggable-plus';
 import tasks from '@/routes/tasks';
 import { GripVertical, X } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyTitle,
+} from '@/components/ui/empty';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import type { Project, Task } from '@/types';
 import Create from './Create.vue';
 import Delete from './Delete.vue';
 import Edit from './Edit.vue';
 import { ref, watch } from 'vue';
-import { router } from "@inertiajs/vue3";
+import { router } from '@inertiajs/vue3';
 import {
     Select,
     SelectContent,
@@ -35,40 +47,48 @@ const props = defineProps<{
 }>();
 
 const reorderedTasks = ref<Task[]>([...props.tasks]);
-const selectedProjectId = ref<string | null>(page.props.query?.project_id?.toString() ?? null);
+const selectedProjectId = ref<string | null>(
+    page.props.query?.project_id?.toString() ?? null,
+);
 
-watch(
-    selectedProjectId,
-    () => {
-        router.get(tasks.index(), pickBy({
+watch(selectedProjectId, () => {
+    router.get(
+        tasks.index(),
+        pickBy({
             project_id: selectedProjectId.value,
-        }), {
+        }),
+        {
             preserveState: false,
             preserveScroll: true,
             only: ['tasks', 'query'],
-        });
-    }
-);
+        },
+    );
+});
 
 const reorder = () => {
-    router.post(tasks.reorder(), {
-        reordered_ids: reorderedTasks.value.map((task: Task) => task.id),
-    }, {
-        preserveState: false,
-        preserveScroll: true,
-        only: ['tasks', 'flash'],
-    });
+    router.post(
+        tasks.reorder(),
+        {
+            reordered_ids: reorderedTasks.value.map((task: Task) => task.id),
+        },
+        {
+            preserveState: false,
+            preserveScroll: true,
+            only: ['tasks', 'flash'],
+        },
+    );
 };
 </script>
 
 <template>
     <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
-
         <Head title="Tasks" />
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">Tasks</h1>
-                <p class="text-sm text-muted-foreground">Manage the tasks in your projects.</p>
+                <p class="text-sm text-muted-foreground">
+                    Manage the tasks in your projects.
+                </p>
             </div>
             <Create :projects="props.projects" />
         </div>
@@ -84,8 +104,11 @@ const reorder = () => {
                             <SelectItem :value="null">
                                 All projects
                             </SelectItem>
-                            <SelectItem v-for="project in props.projects" :key="project.id"
-                                :value="project.id.toString()">
+                            <SelectItem
+                                v-for="project in props.projects"
+                                :key="project.id"
+                                :value="project.id.toString()"
+                            >
                                 {{ project.name }}
                             </SelectItem>
                         </SelectGroup>
@@ -102,7 +125,12 @@ const reorder = () => {
             </EmptyHeader>
         </Empty>
         <div v-else class="overflow-hidden rounded-lg border">
-            <VueDraggable v-model="reorderedTasks" target="tbody" :animation="150" @end="reorder">
+            <VueDraggable
+                v-model="reorderedTasks"
+                target="tbody"
+                :animation="150"
+                @end="reorder"
+            >
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -119,12 +147,20 @@ const reorder = () => {
                             <TableCell>
                                 <GripVertical class="drag-handle cursor-grab" />
                             </TableCell>
-                            <TableCell class="font-medium">{{ task.name }}</TableCell>
-                            <TableCell>{{ task.project?.name ?? '—' }}</TableCell>
+                            <TableCell class="font-medium">{{
+                                task.name
+                            }}</TableCell>
+                            <TableCell>{{
+                                task.project?.name ?? '—'
+                            }}</TableCell>
                             <TableCell>
-                                <Badge variant="secondary">{{ task.priority }}</Badge>
+                                <Badge variant="secondary">{{
+                                    task.priority
+                                }}</Badge>
                             </TableCell>
-                            <TableCell class="whitespace-nowrap">{{ task.created_at }}</TableCell>
+                            <TableCell class="whitespace-nowrap">{{
+                                task.created_at
+                            }}</TableCell>
                             <TableCell>
                                 <div class="flex justify-end gap-2">
                                     <Edit :task="task" />

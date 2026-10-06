@@ -44,7 +44,7 @@ final class taskController extends Controller
                 ->withWhereRelation('project', 'user_id', $this->currentUser->id)
                 ->when(
                     Arr::get($data, 'project_id'),
-                    fn(Builder $query, int $projectId) => $query->where('project_id', $projectId)
+                    fn (Builder $query, int $projectId) => $query->where('project_id', $projectId)
                 )
                 ->orderBy('priority')
                 ->get();
