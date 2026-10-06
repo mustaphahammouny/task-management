@@ -25,42 +25,42 @@ Run these commands from the project directory after cloning the repository.
 
 1. Install the dependencies:
 
-   ```sh
-   composer install
-   npm install
-   ```
+    ```sh
+    composer install
+    npm install
+    ```
 
 2. Create the environment file and generate the application key:
 
-   ```sh
-   php -r "file_exists('.env') || copy('.env.example', '.env');"
-   php artisan key:generate
-   ```
+    ```sh
+    php -r "file_exists('.env') || copy('.env.example', '.env');"
+    php artisan key:generate
+    ```
 
 3. Start MySQL and create a database named `task_management` using your database manager (for example, phpMyAdmin). Update `.env` with your local MySQL credentials:
 
-   ```dotenv
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=task_management
-   DB_USERNAME=
-   DB_PASSWORD=
-   ```
+    ```dotenv
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=task_management
+    DB_USERNAME=
+    DB_PASSWORD=
+    ```
 
-   Replace the username and password with your MySQL credentials, then create the tables:
+    Replace the username and password with your MySQL credentials, then create the tables:
 
-   ```sh
-   php artisan migrate
-   ```
+    ```sh
+    php artisan migrate
+    ```
 
 4. Start the development servers:
 
-   ```sh
-   composer run dev
-   ```
+    ```sh
+    composer run dev
+    ```
 
-   Open the local application address printed in the terminal. Keep the command running while developing.
+    Open the local application address printed in the terminal. Keep the command running while developing.
 
 ## Useful commands
 
