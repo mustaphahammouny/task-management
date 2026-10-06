@@ -9,6 +9,10 @@ final class UpdateProject
 {
     public function execute(Project $project, array $data): Project
     {
-        return DB::transaction(fn() => $project->update($data));
+        return DB::transaction(
+            fn () => $project->update([
+                'name' => $data['name'],
+            ])
+        );
     }
 }

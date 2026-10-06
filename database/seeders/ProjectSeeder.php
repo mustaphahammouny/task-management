@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ProjectSeeder extends Seeder
@@ -14,6 +13,6 @@ class ProjectSeeder extends Seeder
      */
     public function run(): void
     {
-        User::all()->each(fn(User $user) => Project::factory()->for($user)->count(rand(1, 5))->create());
+        User::all()->each(fn (User $user) => Project::factory()->for($user)->count(rand(1, 5))->create());
     }
 }

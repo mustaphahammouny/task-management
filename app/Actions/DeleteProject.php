@@ -9,6 +9,8 @@ final class DeleteProject
 {
     public function execute(Project $project): void
     {
-        DB::transaction(fn() => $project->delete());
+        DB::transaction(
+            fn () => $project->delete()
+        );
     }
 }

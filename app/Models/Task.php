@@ -2,33 +2,36 @@
 
 namespace App\Models;
 
-use Database\Factories\ProjectFactory;
+use Database\Factories\TaskFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $project_id
  * @property string $name
+ * @property int $priority
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name'])]
-class Project extends Model
+#[Fillable(['name', 'priority'])]
+class Task extends Model
 {
-    /** @use HasFactory<ProjectFactory> */
+    /** @use HasFactory<TaskFactory> */
     use HasFactory;
 
-    public function user(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class);
+        return [
+            'priority' => 'integer',
+        ];
     }
 
-    public function tasks(): HasMany
+    public function project(): BelongsTo
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsTo(Project::class);
     }
 }

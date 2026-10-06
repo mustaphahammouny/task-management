@@ -3,17 +3,18 @@
 namespace App\Actions;
 
 use App\Models\Project;
-use App\Models\User;
+use App\Models\Task;
 use Illuminate\Support\Facades\DB;
 
-final class CreateProject
+final class CreateTask
 {
-    public function execute(User $user, array $data): Project
+    public function execute(Project $project, array $data): Task
     {
         return DB::transaction(
-            fn () => $user->projects()
+            fn () => $project->tasks()
                 ->create([
                     'name' => $data['name'],
+                    'priority' => 1,
                 ])
         );
     }

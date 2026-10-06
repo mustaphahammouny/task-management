@@ -5,15 +5,15 @@ namespace App\Http\Controllers;
 use App\Actions\CreateProject;
 use App\Actions\DeleteProject;
 use App\Actions\UpdateProject;
-use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 
-class ProjectController extends Controller
+final class ProjectController extends Controller
 {
     public function __construct(
         #[CurrentUser] private readonly User $currentUser,

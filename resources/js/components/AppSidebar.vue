@@ -16,11 +16,17 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import tasks from '@/routes/tasks';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Tasks',
+        href: tasks.index(),
         icon: LayoutGrid,
     },
 ];
