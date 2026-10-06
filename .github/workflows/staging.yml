@@ -48,7 +48,7 @@ jobs:
         run: npm run build
 
       - name: Deploy with rsync
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
         uses: burnett01/rsync-deployments@v9
         with:
           switches: -avzr --delete --exclude='storage/app/public/*' --exclude='node_modules' --exclude='.git' --exclude='.github' --exclude='.env'
@@ -60,7 +60,7 @@ jobs:
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
 
       - name: Laravel server setup
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
