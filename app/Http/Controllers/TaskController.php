@@ -21,7 +21,7 @@ use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class taskController extends Controller
+final class TaskController extends Controller
 {
     public function __construct(
         #[CurrentUser] private readonly User $currentUser,
