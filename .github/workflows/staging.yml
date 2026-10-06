@@ -1,0 +1,95 @@
+name: staging
+
+on:
+  push:
+    branches:
+      - staging
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Install Node Dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Prepare env file
+        run: |
+          cp .env.example .env
+
+          sed -i "s|^APP_NAME=.*|APP_NAME=\"Task Management\"|" .env
+          sed -i "s|^APP_URL=.*|APP_URL=https://task-management.mustaphahammouny.com|" .env
+
+      - name: Build Frontend
+        run: npm run build
+
+      - name: Deploy with rsync
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: burnett01/rsync-deployments@v9
+        with:
+          switches: -avzr --delete --exclude='storage/app/public/*' --exclude='node_modules' --exclude='.git' --exclude='.github' --exclude='.env'
+          path: ./
+          remote_path: /home/${{ secrets.SERVER_USERNAME }}/domains/mustaphahammouny.com/public_html/task-management
+          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_port: ${{ secrets.SERVER_PORT }}
+          remote_user: ${{ secrets.SERVER_USERNAME }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Laravel server setup
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@v9
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/${{ secrets.SERVER_USERNAME }}/domains/mustaphahammouny.com/public_html/task-management
+
+            if [ ! -f .env ]; then
+              cp .env.example .env
+            fi
+
+            sed -i "s|^APP_NAME=.*|APP_NAME=\"Task Management\"|" .env
+            sed -i "s|^APP_KEY=.*|APP_KEY=${{ secrets.APP_KEY }}|" .env
+            sed -i "s|^APP_URL=.*|APP_URL=https://task-management.mustaphahammouny.com|" .env
+
+            sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=${{ secrets.DB_CONNECTION }}|" .env
+            sed -i "s|^DB_HOST=.*|DB_HOST=${{ secrets.DB_HOST }}|" .env
+            sed -i "s|^DB_PORT=.*|DB_PORT=${{ secrets.DB_PORT }}|" .env
+            sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${{ secrets.DB_DATABASE }}|" .env
+            sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${{ secrets.DB_USERNAME }}|" .env
+            sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|" .env
+
+            php artisan down || true
+            trap 'php artisan up || true' EXIT
+
+            php artisan migrate
+            php artisan optimize:clear
+            php artisan optimize

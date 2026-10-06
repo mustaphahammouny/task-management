@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import tasks from '@/routes/tasks';
 
 const mainNavItems: NavItem[] = [
     {
@@ -23,20 +24,14 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Tasks',
+        href: tasks.index(),
+        icon: LayoutGrid,
+    },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const footerNavItems: NavItem[] = [];
 </script>
 
 <template>
