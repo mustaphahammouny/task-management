@@ -27,7 +27,7 @@ const open = ref(false);
                 <DrawerDescription>Update the name of this task.</DrawerDescription>
             </DrawerHeader>
             <Form :action="tasks.update(task.id)" v-slot="{ errors, processing }" class="flex min-h-0 flex-1 flex-col"
-                :options="{ only: ['tasks', 'flash'], preserveScroll: true }" @success="open = false">
+                :options="{ only: ['tasks', 'flash'], preserveState: false, preserveScroll: true }" @success="open = false">
                 <div class="grid gap-2 overflow-y-auto px-4 py-2">
                     <Label :for="`edit-task-name-${task.id}`">Name</Label>
                     <Input :id="`edit-task-name-${task.id}`" name="name" :default-value="task.name" required

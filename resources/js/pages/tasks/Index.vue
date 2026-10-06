@@ -1,6 +1,8 @@
 ﻿<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { index } from '@/routes/tasks';
+import { VueDraggable } from 'vue-draggable-plus'
+import tasks from '@/routes/tasks';
+import { GripVertical } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,15 +10,29 @@ import type { Project, Task } from '@/types';
 import Create from './Create.vue';
 import Delete from './Delete.vue';
 import Edit from './Edit.vue';
+import { ref } from 'vue';
+import { router } from "@inertiajs/vue3";
 
 defineOptions({
-    layout: { breadcrumbs: [{ title: 'Tasks', href: index() }] },
+    layout: { breadcrumbs: [{ title: 'Tasks', href: tasks.index() }] },
 });
 
-defineProps<{
+const props = defineProps<{
     tasks: Task[];
     projects: Project[];
 }>();
+
+const reorderedTasks = ref<Task[]>([...props.tasks]);
+
+const reorder = async () => {
+    router.post(tasks.reorder(), {
+        reordered_ids: reorderedTasks.value.map((task: Task) => task.id),
+    }, {
+        preserveScroll: true,
+        preserveState: false,
+        only: ['tasks', 'flash'],
+    });
+};
 </script>
 
 <template>
@@ -41,33 +57,39 @@ defineProps<{
             </EmptyHeader>
         </Empty>
         <div v-else class="overflow-hidden rounded-lg border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Project</TableHead>
-                        <TableHead>Priority</TableHead>
-                        <TableHead>Created at</TableHead>
-                        <TableHead class="text-right">Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <TableRow v-for="task in tasks" :key="task.id">
-                        <TableCell class="font-medium">{{ task.name }}</TableCell>
-                        <TableCell>{{ task.project?.name ?? '—' }}</TableCell>
-                        <TableCell>
-                            <Badge variant="secondary">{{ task.priority }}</Badge>
-                        </TableCell>
-                        <TableCell class="whitespace-nowrap">{{ task.created_at }}</TableCell>
-                        <TableCell>
-                            <div class="flex justify-end gap-2">
-                                <Edit :task="task" />
-                                <Delete :task="task" />
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+            <VueDraggable v-model="reorderedTasks" target="tbody" :animation="150" @end="reorder">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead></TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Project</TableHead>
+                            <TableHead>Priority</TableHead>
+                            <TableHead>Created at</TableHead>
+                            <TableHead class="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-for="task in reorderedTasks" :key="task.id">
+                            <TableCell>
+                                <GripVertical class="drag-handle cursor-grab" />
+                            </TableCell>
+                            <TableCell class="font-medium">{{ task.name }}</TableCell>
+                            <TableCell>{{ task.project?.name ?? '—' }}</TableCell>
+                            <TableCell>
+                                <Badge variant="secondary">{{ task.priority }}</Badge>
+                            </TableCell>
+                            <TableCell class="whitespace-nowrap">{{ task.created_at }}</TableCell>
+                            <TableCell>
+                                <div class="flex justify-end gap-2">
+                                    <Edit :task="task" />
+                                    <Delete :task="task" />
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </VueDraggable>
         </div>
     </div>
 </template>

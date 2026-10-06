@@ -18,8 +18,9 @@ class StoreTaskRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'priority' => ['required', 'integer', 'min:1'],
             'project_id' => [
-                'nullable',
+                'required',
                 'integer',
                 Rule::exists(Project::class, 'id')
                     ->where('user_id', $this->user()->id),

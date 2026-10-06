@@ -26,13 +26,19 @@ const open = ref(false);
                 <DrawerDescription>Add a task to one of your projects.</DrawerDescription>
             </DrawerHeader>
             <Form :action="tasks.store()" v-slot="{ errors, processing }" class="flex min-h-0 flex-1 flex-col"
-                :options="{ only: ['tasks', 'flash'], preserveScroll: true }" reset-on-success @success="open = false">
+                :options="{ only: ['tasks', 'flash'], preserveState: false, preserveScroll: true }" reset-on-success @success="open = false">
                 <div class="grid gap-4 overflow-y-auto px-4 py-2">
                     <div class="grid gap-2">
                         <Label for="create-task-name">Name</Label>
                         <Input id="create-task-name" name="name" placeholder="Task name" required maxlength="255"
                             :disabled="processing" :aria-invalid="!!errors.name" />
                         <InputError :message="errors.name" />
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="create-task-priority">Priority</Label>
+                        <Input id="create-task-priority" name="priority" type="number" min="1" step="1" required
+                            :disabled="processing" :aria-invalid="!!errors.priority" />
+                        <InputError :message="errors.priority" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="create-task-project">Project</Label>

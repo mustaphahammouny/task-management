@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Actions\CreateTask;
 use App\Actions\DeleteTask;
+use App\Actions\ReorderTasks;
 use App\Actions\UpdateTask;
 use App\Http\Requests\IndexTaskRequest;
+use App\Http\Requests\ReorderTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\ProjectResource;
@@ -40,9 +42,9 @@ final class taskController extends Controller
                 ->withWhereRelation('project', 'user_id', $this->currentUser->id)
                 ->when(
                     Arr::get($data, 'project_id'),
-                    fn (Builder $query, int $projectId) => $query->where('project_id', $projectId)
+                    fn(Builder $query, int $projectId) => $query->where('project_id', $projectId)
                 )
-                ->orderBy('priority', 'asc')
+                ->orderBy('priority')
                 ->get();
 
             return TaskResource::collection($tasks);
@@ -86,6 +88,23 @@ final class taskController extends Controller
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Task updated.')]);
         } catch (\Throwable $th) {
             Inertia::flash('toast', ['type' => 'error', 'message' => __('Failed to update task.')]);
+        }
+
+        return back();
+    }
+
+    public function reorder(
+        ReorderTaskRequest $request,
+        ReorderTasks $reorderTasks,
+    ): RedirectResponse {
+        $data = $request->validated();
+
+        try {
+            $reorderTasks->execute($this->currentUser, $data);
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('Tasks reordered.')]);
+        } catch (\Throwable $th) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('Failed to reorder tasks.')]);
         }
 
         return back();

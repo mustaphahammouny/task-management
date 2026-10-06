@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->unsignedInteger('priority');
+            $table->unsignedInteger('priority')->index();
             $table->timestamps();
         });
     }

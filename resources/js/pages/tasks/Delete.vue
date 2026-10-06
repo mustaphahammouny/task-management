@@ -30,7 +30,7 @@ const open = ref(false);
         </DialogTrigger>
         <DialogContent>
             <Form :action="tasks.destroy(task.id)" reset-on-success
-                :options="{ only: ['tasks', 'flash'], preserveScroll: true }" class="space-y-6"
+                :options="{ only: ['tasks', 'flash'], preserveState: false, preserveScroll: true }" class="space-y-6"
                 v-slot="{ errors, processing, reset, clearErrors }" @success="open = false">
                 <DialogHeader class="space-y-3">
                     <DialogTitle>Are you sure you want to delete this task?</DialogTitle>
