@@ -31,12 +31,14 @@ final class taskController extends Controller
     {
         $data = $request->validated();
 
+        // callback is used to prevent loading projects each time (using only in inertia will not call this callback)
         $projectsCallback = function () {
             $projects = $this->currentUser->projects()->get();
 
             return ProjectResource::collection($projects);
         };
 
+        // we can use pagination here
         $tasksCallback = function () use ($data) {
             $tasks = Task::query()
                 ->withWhereRelation('project', 'user_id', $this->currentUser->id)
